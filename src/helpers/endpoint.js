@@ -199,23 +199,24 @@ export function buildResumeFilename({ name, role, company, maxLength = 80 }) {
 }
 
 export function shortenLinkedIn(url) {
-  if (!url) return "";
+  // if (!url) return "";
 
-  let clean = url.trim();
+  // let clean = url.trim();
 
-  // Not LinkedIn → leave unchanged
-  if (!clean.includes("linkedin.com")) return clean;
+  // // Not LinkedIn → leave unchanged
+  // if (!clean.includes("linkedin.com")) return clean;
 
-  // Remove protocol + www
-  clean = clean.replace(/^https?:\/\//, "").replace(/^www\./, "");
+  // // Remove protocol + www
+  // clean = clean.replace(/^https?:\/\//, "").replace(/^www\./, "");
 
-  // Remove trailing slash
-  clean = clean.replace(/\/+$/, "");
+  // // Remove trailing slash
+  // clean = clean.replace(/\/+$/, "");
 
-  // Remove "linkedin.com"
-  clean = clean.replace(/^linkedin\.com/, "");
+  // // Remove "linkedin.com"
+  // clean = clean.replace(/^linkedin\.com/, "");
 
   // Ensure no accidental leading slashes duplication
-  return clean.replace(/^\/+/, "/");
+  // return clean.replace(/^\/+/, "/");
+  return url
 }
 
