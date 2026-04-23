@@ -21,9 +21,6 @@ export const POST = async (req) => {
           msg: 'This account is inactive'
         })
       }
-      console.log('///////////////////////////', user.password)
-      console.log('///////////////////////////', password)
-      console.log('///////////////////////////', await bcrypt.compare(password, user.password))
       if (await verifyPassword(user.password, password)) {
         const tokenId = randomUUID();
         const token = generateToken(user, tokenId);

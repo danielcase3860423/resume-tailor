@@ -118,7 +118,6 @@ export default function ResumePage() {
     }
 
     setWorking(true);
-
     try {
       const res = await fetch('/api/resume/create-resume', {
         method: 'POST',
