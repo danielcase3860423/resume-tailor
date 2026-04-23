@@ -31,7 +31,7 @@ class UserService extends BaseApiProvider {
       })
       .catch(({ response }) => {
         if (!response) {
-          return { error: ERROR_FAILED, msg: 'ERROR-OCCUR' };
+          return { error: ERROR_FAILED, msg: 'ERROR-OCCUR: Login Error' };
         } else {
           const { data, status } = response;
           if ([401].includes(status)) {
@@ -106,7 +106,7 @@ class UserService extends BaseApiProvider {
       })
       .catch(({ response }) => {
         if (!response) {
-          return { error: ERROR_FAILED, msg: 'ERROR-OCCUR' };
+          return { error: ERROR_FAILED, msg: 'ERROR-OCCUR: Role Get Error' };
         } else {
           const { data, status } = response;
           if ([401].includes(status)) {
