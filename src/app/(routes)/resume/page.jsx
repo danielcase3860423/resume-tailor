@@ -119,6 +119,7 @@ export default function ResumePage() {
 
     setWorking(true);
     try {
+      console.log('///////////////////////////////////////////')
       const res = await fetch('/api/resume/create-resume', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
