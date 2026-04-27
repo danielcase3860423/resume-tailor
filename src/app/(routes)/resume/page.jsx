@@ -238,7 +238,8 @@ export default function ResumePage() {
         throw new Error(data?.msg || 'Failed to answer question.');
       }
 
-      setChatMessages((currentMessages) => [...currentMessages, { role: 'assistant', content: data.answer }]);
+      await setChatMessages((currentMessages) => [...currentMessages, { role: 'assistant', content: data.answer }]);
+      navigator.clipboard.writeText(data.answer);
     } catch (err) {
       console.error(err);
       showToastErrorMsg(err.message || 'Failed to answer question.');
