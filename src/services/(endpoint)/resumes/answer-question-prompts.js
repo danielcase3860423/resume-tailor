@@ -74,7 +74,8 @@ Target application context:
 ${JSON.stringify(
     {
       company_name: cleanString(companyName),
-      target_position: cleanString(position)
+      target_position: 'senior software engineer'
+      // target_position: cleanString(position)
     },
     null,
     2
