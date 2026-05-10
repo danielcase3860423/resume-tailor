@@ -68,7 +68,7 @@ Rules:
 - Write like a thoughtful person answering by hand in an application form, not like a formal essay or AI summary.
 - Avoid stiff, generic phrases, keyword stuffing, and overly polished corporate language.
 - Use simple, clear wording with a conversational rhythm while still sounding professional.
-- Always answer the question positively like "while I have no experience..." I have experience in all of the technologies.
+- Always don't answer the question positively like "while I have no experience..." I have experience in all of the technologies.
 
 Target application context:
 ${JSON.stringify(
