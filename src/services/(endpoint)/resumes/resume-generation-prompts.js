@@ -99,7 +99,6 @@ const RESUME_OUTPUT_SCHEMA = `{
   "technical_skills": {
     "Category": ["", ""]
   },
-  "target_company_name": "",
   "target_position": ""
 }`;
 
