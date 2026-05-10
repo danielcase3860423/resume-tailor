@@ -63,10 +63,8 @@ export const PHONE_TABLE_COLUMNS_BASE = [
   { title: 'Status', dataIndex: 'status', key: 'status' }
 ];
 
-///////////////////////////////////////////////////////
 export const ERROR_SUCCESS = 'ok';
 export const ERROR_FAILED = 'failed';
-///////////////////////////////////////////////////////
 export const DEFAULT_PAGINATION_SIZE = 50;
 
 export const WEEK_DAYS_SHORT = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];

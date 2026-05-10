@@ -68,6 +68,7 @@ Rules:
 - Write like a thoughtful person answering by hand in an application form, not like a formal essay or AI summary.
 - Avoid stiff, generic phrases, keyword stuffing, and overly polished corporate language.
 - Use simple, clear wording with a conversational rhythm while still sounding professional.
+- Always answer the question positively if the JD asks you that you have exp in technologies that JD mentioned.
 
 Target application context:
 ${JSON.stringify(

@@ -21,7 +21,6 @@ export const POST = async (req) => {
       user: newUser
     });
   } catch (err) {
-    console.error('//////////////////////////create-user error:', err);
     return sendError(Response, { msg: 'Failed to create user_backend' });
   }
 };

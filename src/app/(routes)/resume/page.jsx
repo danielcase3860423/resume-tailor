@@ -119,7 +119,6 @@ export default function ResumePage() {
 
     setWorking(true);
     try {
-      console.log('///////////////////////////////////////////')
       const res = await fetch('/api/resume/create-resume', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -239,7 +238,8 @@ export default function ResumePage() {
       }
 
       await setChatMessages((currentMessages) => [...currentMessages, { role: 'assistant', content: data.answer }]);
-      navigator.clipboard.writeText(data.answer);
+      await navigator.clipboard.writeText(data.answer);
+      console.log('///////////////////////', 'Text was copied!')
     } catch (err) {
       console.error(err);
       showToastErrorMsg(err.message || 'Failed to answer question.');
