@@ -161,7 +161,7 @@ async function generateTemplate1(data) {
   pdfDoc.setProducer('');
   pdfDoc.setCreator('');
   pdfDoc.setAuthor(`${data.name}`);
-  pdfDoc.setKeywords(['Resume', data.name, data.target_position || '']);
+  pdfDoc.setKeywords(['Resume', data.name, 'Senior Software Engineer' || '']);
 
   let page = pdfDoc.addPage();
   const { width, height } = page.getSize();
@@ -498,7 +498,7 @@ async function generateTemplate2(data) {
   };
 
   drawText(sanitizeText((data.name || '').toUpperCase()), pdfStyle.fontsize.name, fontBold, pdfStyle.colors.black);
-  drawText(sanitizeText(data.target_position || ''), pdfStyle.fontsize.title, fontItalic, pdfStyle.colors.accentGreen);
+  drawText(sanitizeText('Senior Software Engineer' || ''), pdfStyle.fontsize.title, fontItalic, pdfStyle.colors.accentGreen);
   drawText(
     [data.mobile, data.email, data.linkedin || null, data.address].filter(Boolean).join('   |   '),
     pdfStyle.fontsize.contactInfo,
@@ -681,7 +681,7 @@ async function generateTemplate3(data) {
     spacing: 18
   });
   leftY -= 10;
-  leftY = drawLines(data.target_position || '', {
+  leftY = drawLines('Senior Software Engineer' || '', {
     x: leftX,
     yRef: leftY,
     size: 11,
@@ -896,7 +896,7 @@ async function generateTemplate4(data) {
   };
 
   drawBlock(data.name || '', { size: 22, font: fontBold, spacing: 22 });
-  drawBlock(data.target_position || '', { size: 13, font: fontItalic, color: style.colors.accent });
+  drawBlock('Senior Software Engineer' || '', { size: 13, font: fontItalic, color: style.colors.accent });
   drawBlock([data.email, data.mobile, data.linkedin, data.address].filter(Boolean).join(' | '), {
     size: 10,
     color: style.colors.faded
@@ -1026,7 +1026,7 @@ async function generateTemplate5(data) {
     font: fontBold,
     color: style.colors.headerText
   });
-  page.drawText(sanitizeText(data.target_position || ''), {
+  page.drawText(sanitizeText('Senior Software Engineer' || ''), {
     x: style.marginX,
     y: height - style.header.positionY,
     size: 12,
@@ -1307,7 +1307,7 @@ async function generateTemplate6(data) {
 
   drawCenteredLines(data.name || '', { size: 22, font: fontBold, spacing: 22 });
   y -= 2;
-  drawCenteredLines(data.target_position || '', { size: 12, font: fontItalic, color: style.colors.accent, spacing: 16 });
+  drawCenteredLines('Senior Software Engineer' || '', { size: 12, font: fontItalic, color: style.colors.accent, spacing: 16 });
   drawCenteredLines([data.email, data.mobile, data.linkedin, data.address].filter(Boolean).join(' | '), {
     size: 9,
     font: fontRegular,
@@ -1531,7 +1531,7 @@ async function generateTemplate7(data) {
   });
 
   const nameWidth = fontRegular.widthOfTextAtSize(nameText, 17);
-  page.drawText(sanitizeText(data.target_position || ''), {
+  page.drawText(sanitizeText('Senior Software Engineer' || ''), {
     x: style.marginX + nameWidth + 12,
     y: y + 1,
     size: 10,
@@ -1626,7 +1626,7 @@ async function generateTemplate8(data) {
   };
 
   drawBlock(data.name || '', { size: 19, font: fontBold, spacing: 18 });
-  drawBlock(data.target_position || '', { size: 11, font: fontItalic, color: style.colors.accent, spacing: 15 });
+  drawBlock('Senior Software Engineer' || '', { size: 11, font: fontItalic, color: style.colors.accent, spacing: 15 });
   drawBlock([data.email, data.mobile, data.linkedin, data.address].filter(Boolean).join(' | '), {
     size: 8.5,
     color: style.colors.faded,
@@ -1766,7 +1766,7 @@ async function generateTemplate9(data) {
       maxWidth: sidebarWidth,
       spacing: 18
     });
-  leftY = drawLines(data.target_position || '', {
+  leftY = drawLines('Senior Software Engineer' || '', {
     x: sidebarX,
     yRef: leftY - 2,
     size: 10.5,
@@ -2005,7 +2005,7 @@ async function generateTemplate10(data) {
     color: style.colors.headerText,
     spacing: 20
   });
-  drawCenteredHeaderText(data.target_position || '', height - style.header.titleY, {
+  drawCenteredHeaderText('Senior Software Engineer' || '', height - style.header.titleY, {
     size: 12,
     font: fontItalic,
     color: style.colors.soft,
