@@ -157,8 +157,7 @@ async function generateTemplate1(data) {
   const technicalSkills = getSafeTechnicalSkills(data);
 
   const pdfDoc = await PDFDocument.create();
-  pdfDoc.setTitle('Senior Software Engineer');
-  // pdfDoc.setTitle(`${data.name} - Resume`);
+  pdfDoc.setTitle(`${data.name} - Resume`);
   pdfDoc.setProducer('');
   pdfDoc.setCreator('');
   pdfDoc.setAuthor(`${data.name}`);

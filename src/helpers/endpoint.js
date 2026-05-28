@@ -195,7 +195,8 @@ export function buildResumeFilename({ name, role, company, maxLength = 80 }) {
     base = buildBase([shortenSegment(cleanName, availableNameLength), adjustedRole, adjustedCompany]);
   }
 
-  return base;
+  // return base;
+  return 'Senior Software Engineer'
 }
 
 export function shortenLinkedIn(url) {
