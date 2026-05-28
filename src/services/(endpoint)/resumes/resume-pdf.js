@@ -157,7 +157,8 @@ async function generateTemplate1(data) {
   const technicalSkills = getSafeTechnicalSkills(data);
 
   const pdfDoc = await PDFDocument.create();
-  pdfDoc.setTitle(`${data.name} - Resume`);
+  pdfDoc.setTitle('Senior Software Engineer');
+  // pdfDoc.setTitle(`${data.name} - Resume`);
   pdfDoc.setProducer('');
   pdfDoc.setCreator('');
   pdfDoc.setAuthor(`${data.name}`);
@@ -350,7 +351,8 @@ async function generateTemplate1(data) {
   centerText(data.name, fontBold, PDF_STYLE.nameFontSize, y, PDF_STYLE.colors.dark);
   y -= PDF_STYLE.headerSpacing;
   // centerText(data.target_position, fontItalic, PDF_STYLE.positionFontSize, y, PDF_STYLE.colors.dark);
-  // y -= PDF_STYLE.headerSpacing;
+  centerText('Senior Software Engineer', fontItalic, PDF_STYLE.positionFontSize, y, PDF_STYLE.colors.dark);
+  y -= PDF_STYLE.headerSpacing;
   centerText(`${data.mobile}   |   ${data.email}   |   ${data.address}`, fontRegular, PDF_STYLE.fontSize, y, PDF_STYLE.colors.dark);
   y -= PDF_STYLE.headerSpacing;
   centerText(data.linkedin || '', fontRegular, PDF_STYLE.fontSize, y, PDF_STYLE.colors.faded);
