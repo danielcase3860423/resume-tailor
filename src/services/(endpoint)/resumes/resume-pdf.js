@@ -348,9 +348,9 @@ async function generateTemplate1(data) {
   };
 
   centerText(data.name, fontBold, PDF_STYLE.nameFontSize, y, PDF_STYLE.colors.dark);
-  y -= PDF_STYLE.headerSpacing;
+  // y -= PDF_STYLE.headerSpacing;
   // centerText(data.target_position, fontItalic, PDF_STYLE.positionFontSize, y, PDF_STYLE.colors.dark);
-  centerText('Senior Software Engineer', fontItalic, PDF_STYLE.positionFontSize, y, PDF_STYLE.colors.dark);
+  // centerText('Senior Software Engineer', fontItalic, PDF_STYLE.positionFontSize, y, PDF_STYLE.colors.dark);
   y -= PDF_STYLE.headerSpacing;
   centerText(`${data.mobile}   |   ${data.email}   |   ${data.address}`, fontRegular, PDF_STYLE.fontSize, y, PDF_STYLE.colors.dark);
   y -= PDF_STYLE.headerSpacing;
@@ -498,7 +498,7 @@ async function generateTemplate2(data) {
   };
 
   drawText(sanitizeText((data.name || '').toUpperCase()), pdfStyle.fontsize.name, fontBold, pdfStyle.colors.black);
-  drawText(sanitizeText('Senior Software Engineer' || ''), pdfStyle.fontsize.title, fontItalic, pdfStyle.colors.accentGreen);
+  // drawText(sanitizeText('Senior Software Engineer' || ''), pdfStyle.fontsize.title, fontItalic, pdfStyle.colors.accentGreen);
   drawText(
     [data.mobile, data.email, data.linkedin || null, data.address].filter(Boolean).join('   |   '),
     pdfStyle.fontsize.contactInfo,
@@ -681,14 +681,14 @@ async function generateTemplate3(data) {
     spacing: 18
   });
   leftY -= 10;
-  leftY = drawLines('Senior Software Engineer' || '', {
-    x: leftX,
-    yRef: leftY,
-    size: 11,
-    font: fontItalic,
-    color: style.colors.accent,
-    maxWidth: leftWidth
-  });
+  // leftY = drawLines('Senior Software Engineer' || '', {
+  //   x: leftX,
+  //   yRef: leftY,
+  //   size: 11,
+  //   font: fontItalic,
+  //   color: style.colors.accent,
+  //   maxWidth: leftWidth
+  // });
   leftY -= 14;
   leftY = drawLines('CONTACT', {
     x: leftX,
@@ -896,7 +896,7 @@ async function generateTemplate4(data) {
   };
 
   drawBlock(data.name || '', { size: 22, font: fontBold, spacing: 22 });
-  drawBlock('Senior Software Engineer' || '', { size: 13, font: fontItalic, color: style.colors.accent });
+  // drawBlock('Senior Software Engineer' || '', { size: 13, font: fontItalic, color: style.colors.accent });
   drawBlock([data.email, data.mobile, data.linkedin, data.address].filter(Boolean).join(' | '), {
     size: 10,
     color: style.colors.faded
@@ -1026,13 +1026,13 @@ async function generateTemplate5(data) {
     font: fontBold,
     color: style.colors.headerText
   });
-  page.drawText(sanitizeText('Senior Software Engineer' || ''), {
-    x: style.marginX,
-    y: height - style.header.positionY,
-    size: 12,
-    font: fontItalic,
-    color: style.colors.headerText
-  });
+  // page.drawText(sanitizeText('Senior Software Engineer' || ''), {
+  //   x: style.marginX,
+  //   y: height - style.header.positionY,
+  //   size: 12,
+  //   font: fontItalic,
+  //   color: style.colors.headerText
+  // });
   page.drawText(sanitizeText([data.email, data.mobile, data.linkedin].filter(Boolean).join(' | ')), {
     x: style.marginX,
     y: height - style.header.contactY,
@@ -1307,7 +1307,7 @@ async function generateTemplate6(data) {
 
   drawCenteredLines(data.name || '', { size: 22, font: fontBold, spacing: 22 });
   y -= 2;
-  drawCenteredLines('Senior Software Engineer' || '', { size: 12, font: fontItalic, color: style.colors.accent, spacing: 16 });
+  // drawCenteredLines('Senior Software Engineer' || '', { size: 12, font: fontItalic, color: style.colors.accent, spacing: 16 });
   drawCenteredLines([data.email, data.mobile, data.linkedin, data.address].filter(Boolean).join(' | '), {
     size: 9,
     font: fontRegular,
@@ -1531,13 +1531,13 @@ async function generateTemplate7(data) {
   });
 
   const nameWidth = fontRegular.widthOfTextAtSize(nameText, 17);
-  page.drawText(sanitizeText('Senior Software Engineer' || ''), {
-    x: style.marginX + nameWidth + 12,
-    y: y + 1,
-    size: 10,
-    font: fontItalic,
-    color: style.colors.dark
-  });
+  // page.drawText(sanitizeText('Senior Software Engineer' || ''), {
+  //   x: style.marginX + nameWidth + 12,
+  //   y: y + 1,
+  //   size: 10,
+  //   font: fontItalic,
+  //   color: style.colors.dark
+  // });
   y -= 20;
   drawContactLine();
   y -= 10;
@@ -1626,7 +1626,7 @@ async function generateTemplate8(data) {
   };
 
   drawBlock(data.name || '', { size: 19, font: fontBold, spacing: 18 });
-  drawBlock('Senior Software Engineer' || '', { size: 11, font: fontItalic, color: style.colors.accent, spacing: 15 });
+  // drawBlock('Senior Software Engineer' || '', { size: 11, font: fontItalic, color: style.colors.accent, spacing: 15 });
   drawBlock([data.email, data.mobile, data.linkedin, data.address].filter(Boolean).join(' | '), {
     size: 8.5,
     color: style.colors.faded,
@@ -1766,15 +1766,15 @@ async function generateTemplate9(data) {
       maxWidth: sidebarWidth,
       spacing: 18
     });
-  leftY = drawLines('Senior Software Engineer' || '', {
-    x: sidebarX,
-    yRef: leftY - 2,
-    size: 10.5,
-    font: fontItalic,
-    color: style.colors.accent,
-    maxWidth: sidebarWidth,
-    spacing: 14
-  });
+  // leftY = drawLines('Senior Software Engineer' || '', {
+  //   x: sidebarX,
+  //   yRef: leftY - 2,
+  //   size: 10.5,
+  //   font: fontItalic,
+  //   color: style.colors.accent,
+  //   maxWidth: sidebarWidth,
+  //   spacing: 14
+  // });
   leftY = drawLines('CONTACT', {
       x: sidebarX,
       yRef: leftY - 10,
@@ -2005,12 +2005,12 @@ async function generateTemplate10(data) {
     color: style.colors.headerText,
     spacing: 20
   });
-  drawCenteredHeaderText('Senior Software Engineer' || '', height - style.header.titleY, {
-    size: 12,
-    font: fontItalic,
-    color: style.colors.soft,
-    spacing: 14
-  });
+  // drawCenteredHeaderText('Senior Software Engineer' || '', height - style.header.titleY, {
+  //   size: 12,
+  //   font: fontItalic,
+  //   color: style.colors.soft,
+  //   spacing: 14
+  // });
   drawCenteredHeaderText([data.email, data.mobile, data.linkedin, data.address].filter(Boolean).join(' | '), height - style.header.contactY, {
     size: 9,
     font: fontRegular,

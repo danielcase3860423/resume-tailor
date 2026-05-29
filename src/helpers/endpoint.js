@@ -196,7 +196,7 @@ export function buildResumeFilename({ name, role, company, maxLength = 80 }) {
   }
 
   // return base;
-  return 'Senior Software Engineer'
+  return name;
 }
 
 export function shortenLinkedIn(url) {
