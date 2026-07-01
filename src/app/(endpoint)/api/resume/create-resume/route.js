@@ -321,9 +321,54 @@ function buildSourceExperiences(profile) {
   }));
 }
 
+function parseWorkExperienceStartDate(value) {
+  const text = cleanString(value);
+  if (!text) return Number.NEGATIVE_INFINITY;
+
+  if (/present|current/i.test(text)) {
+    return Date.now();
+  }
+
+  const isoMatch = text.match(/^(\d{4})(?:[-/](\d{1,2}))?(?:[-/](\d{1,2}))?/);
+  if (isoMatch) {
+    const date = new Date(
+      Number(isoMatch[1]),
+      isoMatch[2] ? Number(isoMatch[2]) - 1 : 0,
+      isoMatch[3] ? Number(isoMatch[3]) : 1
+    );
+    if (!Number.isNaN(date.getTime())) return date.getTime();
+  }
+
+  const monthYearMatch = text.match(/^(\d{1,2})[-/](\d{4})/);
+  if (monthYearMatch) {
+    const date = new Date(Number(monthYearMatch[2]), Number(monthYearMatch[1]) - 1, 1);
+    if (!Number.isNaN(date.getTime())) return date.getTime();
+  }
+
+  const parsed = Date.parse(text);
+  if (!Number.isNaN(parsed)) return parsed;
+
+  const yearMatch = text.match(/\b(19|20)\d{2}\b/);
+  if (yearMatch) {
+    return new Date(Number(yearMatch[0]), 0, 1).getTime();
+  }
+
+  return Number.NEGATIVE_INFINITY;
+}
+
+function sortWorkExperiences(experiences) {
+  if (!Array.isArray(experiences)) return [];
+
+  return [...experiences].sort((left, right) => {
+    const leftTime = parseWorkExperienceStartDate(left?.startDate);
+    const rightTime = parseWorkExperienceStartDate(right?.startDate);
+    return rightTime - leftTime;
+  });
+}
+
 function prepareResumePrompt(profile, sourceExperiences, jobDescription) {
   const jdTechnicalTerms = extractJobDescriptionTechnicalTerms(jobDescription).slice(0, 25);
-  const experiencesText = sourceExperiences
+  const experiencesText = sortWorkExperiences(sourceExperiences)
     .map(
       (experience) => `
 ${experience.jobTitle} at ${experience.employer} (${experience.startDate} - ${experience.endDate})
@@ -461,7 +506,7 @@ async function getAICompletion(prompt) {
 }
 
 async function generateResumeDirect(profile, jobDescription) {
-  const sourceExperiences = buildSourceExperiences(profile);
+  const sourceExperiences = sortWorkExperiences(buildSourceExperiences(profile));
   const promptText = prepareResumePrompt(profile, sourceExperiences, jobDescription);
   const completionJson = await getAICompletion(promptText);
   return {
