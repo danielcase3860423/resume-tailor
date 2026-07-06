@@ -3,7 +3,7 @@ export const revalidate = 0;
 
 import OpenAI from 'openai';
 import { formatPhoneNumber } from '@/helpers/common';
-import { sanitizeText, formatASCIIPart, buildResumeFilename, sendError, shortenLinkedIn } from '@/helpers/endpoint';
+import { sanitizeText, buildResumeFilename, sendError, shortenLinkedIn } from '@/helpers/endpoint';
 import { buildJobDescriptionHash, buildResumeContentHash, computeJobDescriptionSimilarity } from '@/helpers/resume-history';
 import { CONSTANT_USER_ROLE_ADMIN } from '@/config/constants';
 import profileModel from '@/models/profile.model';
@@ -640,11 +640,7 @@ export const POST = async (req) => {
 
     const r = { ...data, ...completion };
     const profileTemplate = profile?.profileTemplate || 'template1';
-    const resume_name = buildResumeFilename({
-      name: formatASCIIPart(r.name),
-      role: r.target_position,
-      company: formatASCIIPart(r.target_company_name)
-    });
+    const resume_name = buildResumeFilename({ name: r.name });
     const resumeContentHash = buildResumeContentHash(completion);
 
     const resumeData = {

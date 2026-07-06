@@ -2,7 +2,7 @@ export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
 import { formatPhoneNumber } from '@/helpers/common';
-import { sanitizeText, formatASCIIPart, sendError, buildResumeFilename, shortenLinkedIn } from '@/helpers/endpoint';
+import { sanitizeText, sendError, buildResumeFilename, shortenLinkedIn } from '@/helpers/endpoint';
 import profileModel from '@/models/profile.model';
 import dbConnect from '@/mongodb';
 import { findResumeByIdAcrossClusters } from '@/mongodb-resume';
@@ -34,11 +34,7 @@ export const POST = async (req) => {
     const r = { ...data, ...completion };
 
     const profileTemplate = profile?.profileTemplate || 'template2';
-    const resume_name = buildResumeFilename({
-      name: formatASCIIPart(r.name),
-      role: r.target_position,
-      company: formatASCIIPart(r.target_company_name)
-    });
+    const resume_name = buildResumeFilename({ name: r.name });
 
     const pdfBytes = await buildResumePdf(r, profileTemplate);
 

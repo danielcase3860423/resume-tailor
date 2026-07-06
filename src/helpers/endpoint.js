@@ -132,70 +132,18 @@ export function shortenRole(str) {
   return str.replace(/[^a-zA-Z0-9 ]/g, '').replace(/\s+/g, ' ').trim().slice(0, 20);
 }
 
-export function buildResumeFilename({ name, role, company, maxLength = 80 }) {
-  const clean = (str) =>
-    (str || '')
-      .normalize('NFD')
-      .replace(/[\u0300-\u036f]/g, '')
-      .replace(/[^a-zA-Z0-9]+/g, ' ')
-      .replace(/\s+/g, ' ')
-      .trim();
+export function buildResumeFilename({ name, maxLength = 80 }) {
+  const cleanName = formatASCIIPart(name);
 
-  const shortenSegment = (str, maxSegmentLength) => {
-    if (!str || str.length <= maxSegmentLength) {
-      return str;
-    }
-
-    const words = str.split(' ').filter(Boolean);
-    if (words.length > 1) {
-      const compactWords = words.map((word) => word.slice(0, Math.max(3, Math.min(word.length, 8))));
-      const compact = compactWords.join(' ');
-      if (compact.length <= maxSegmentLength) {
-        return compact;
-      }
-    }
-
-    if (maxSegmentLength <= 6) {
-      return str.slice(0, maxSegmentLength);
-    }
-
-    return `${str.slice(0, maxSegmentLength - 3)}...`;
-  };
-
-  const cleanName = clean(name);
-  const cleanRole = clean(shortenRole(role));
-  const cleanCompany = clean(company);
-
-  if (!cleanName && !cleanRole && !cleanCompany) {
+  if (!cleanName) {
     return 'resume';
   }
 
-  const buildBase = (parts) => parts.filter(Boolean).join(' ');
-
-  let adjustedRole = cleanRole;
-  let adjustedCompany = cleanCompany;
-  let base = buildBase([cleanName, adjustedRole, adjustedCompany]);
-
-  if (base.length > maxLength) {
-    adjustedRole = shortenSegment(adjustedRole, 20);
-    adjustedCompany = shortenSegment(adjustedCompany, 20);
-    base = buildBase([cleanName, adjustedRole, adjustedCompany]);
+  if (cleanName.length <= maxLength) {
+    return cleanName;
   }
 
-  if (base.length > maxLength) {
-    adjustedRole = shortenSegment(adjustedRole, 12);
-    adjustedCompany = shortenSegment(adjustedCompany, 12);
-    base = buildBase([cleanName, adjustedRole, adjustedCompany]);
-  }
-
-  if (base.length > maxLength && cleanName) {
-    const reservedForOtherParts = buildBase([adjustedRole, adjustedCompany]);
-    const separatorLength = cleanName && reservedForOtherParts ? 1 : 0;
-    const availableNameLength = Math.max(20, maxLength - reservedForOtherParts.length - separatorLength);
-    base = buildBase([shortenSegment(cleanName, availableNameLength), adjustedRole, adjustedCompany]);
-  }
-
-  return base;
+  return cleanName.slice(0, Math.max(1, maxLength - 3)).trimEnd() + '...';
 }
 
 export function shortenLinkedIn(url) {
