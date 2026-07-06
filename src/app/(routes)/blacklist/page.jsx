@@ -1,8 +1,9 @@
 'use client';
 import { useEffect, useMemo, useState } from 'react';
-import { Button, Input, Popconfirm, Spin } from 'antd';
-import { DeleteOutlined, PlusOutlined } from '@ant-design/icons';
+import { Button, Form, Input, Modal, Popconfirm, Spin } from 'antd';
+import { DeleteOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons';
 import { showToastErrorMsg, showToastInfoMsg } from '@/helpers/frontend';
+import companyBlacklistService from '@/services/(routes)/company-blacklist';
 import {
   SpinWrapper,
   StyledButton,
@@ -35,6 +36,9 @@ export default function BlacklistPage() {
   const [companyInput, setCompanyInput] = useState('');
   const [isLoading, setLoading] = useState(true);
   const [isSubmitting, setSubmitting] = useState(false);
+  const [isModalOpen, setModalOpen] = useState(false);
+  const [editingCompany, setEditingCompany] = useState(null);
+  const [form] = Form.useForm();
   const [pagination, setPagination] = useState({
     current: 1,
     pageSize: DEFAULT_PAGINATION_SIZE
@@ -43,10 +47,9 @@ export default function BlacklistPage() {
   const fetchCompanies = async () => {
     try {
       setLoading(true);
-      const res = await fetch('/api/company-blacklist', { cache: 'no-store' });
-      const data = await res.json();
+      const data = await companyBlacklistService.getCompanies();
 
-      if (!res.ok || data?.error) {
+      if (!data || data.error) {
         throw new Error(data?.msg || 'Failed to load blacklisted companies.');
       }
 
@@ -59,8 +62,10 @@ export default function BlacklistPage() {
   };
 
   useEffect(() => {
-    fetchCompanies();
-  }, []);
+    if (currentRole === CONSTANT_USER_ROLE_ADMIN) {
+      fetchCompanies();
+    }
+  }, [currentRole]);
 
   const filteredCompanies = useMemo(() => {
     const term = search.trim().toLowerCase();
@@ -94,6 +99,18 @@ export default function BlacklistPage() {
     });
   }, [filteredCompanies.length]);
 
+  const openEdit = (record) => {
+    form.setFieldsValue({ companyName: record.companyName });
+    setEditingCompany(record);
+    setModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setModalOpen(false);
+    setEditingCompany(null);
+    form.resetFields();
+  };
+
   const handleAddCompanies = async () => {
     const cleanedCompanyInput = String(companyInput || '').trim();
     if (!cleanedCompanyInput) {
@@ -104,14 +121,13 @@ export default function BlacklistPage() {
     setSubmitting(true);
 
     try {
-      const res = await fetch('/api/company-blacklist', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ bulkValue: cleanedCompanyInput, companyName: '', userId: currentUserId || '' })
+      const data = await companyBlacklistService.createCompaniesBulk({
+        bulkValue: cleanedCompanyInput,
+        companyName: '',
+        userId: currentUserId || ''
       });
-      const data = await res.json();
 
-      if (!res.ok || data?.error) {
+      if (!data || data.error) {
         throw new Error(data?.msg || 'Failed to add blacklisted companies.');
       }
 
@@ -125,14 +141,38 @@ export default function BlacklistPage() {
     }
   };
 
+  const handleSaveCompany = async () => {
+    try {
+      const values = await form.validateFields();
+      setSubmitting(true);
+
+      const data = await companyBlacklistService.updateCompany(editingCompany._id, {
+        companyName: values.companyName
+      });
+
+      if (!data || data.error) {
+        throw new Error(data?.msg || 'Failed to update blacklisted company.');
+      }
+
+      showToastInfoMsg('Blacklisted company updated.');
+      closeModal();
+      await fetchCompanies();
+    } catch (error) {
+      if (error?.errorFields) {
+        return;
+      }
+
+      showToastErrorMsg(error.message || 'Failed to update blacklisted company.');
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
   const handleDeleteCompany = async (id) => {
     try {
-      const res = await fetch(`/api/company-blacklist/${id}`, {
-        method: 'DELETE'
-      });
-      const data = await res.json();
+      const data = await companyBlacklistService.deleteCompany(id);
 
-      if (!res.ok || data?.error) {
+      if (!data || data.error) {
         throw new Error(data?.msg || 'Failed to delete blacklisted company.');
       }
 
@@ -152,24 +192,17 @@ export default function BlacklistPage() {
     setSubmitting(true);
 
     try {
-      const results = await Promise.all(
+      await Promise.all(
         selectedCompanyIds.map(async (id) => {
-          const res = await fetch(`/api/company-blacklist/${id}`, {
-            method: 'DELETE'
-          });
-          const data = await res.json();
+          const data = await companyBlacklistService.deleteCompany(id);
 
-          if (!res.ok || data?.error) {
+          if (!data || data.error) {
             throw new Error(data?.msg || 'Failed to delete selected blacklisted companies.');
           }
 
           return data;
         })
       );
-
-      if (!results.length) {
-        throw new Error('Failed to delete selected blacklisted companies.');
-      }
 
       const deletedCount = selectedCompanyIds.length;
       setSelectedCompanyIds([]);
@@ -215,9 +248,12 @@ export default function BlacklistPage() {
       key: 'actions',
       align: 'center',
       render: (_, record) => (
-        <Popconfirm title='Remove this blacklisted company?' okText='Yes' cancelText='No' onConfirm={() => handleDeleteCompany(record._id)}>
-          <Button type='text' danger icon={<DeleteOutlined />} />
-        </Popconfirm>
+        <div style={{ display: 'flex', justifyContent: 'center', gap: 4 }}>
+          <Button type='text' icon={<EditOutlined />} onClick={() => openEdit(record)} />
+          <Popconfirm title='Remove this blacklisted company?' okText='Yes' cancelText='No' onConfirm={() => handleDeleteCompany(record._id)}>
+            <Button type='text' danger icon={<DeleteOutlined />} />
+          </Popconfirm>
+        </div>
       )
     }
   ];
@@ -228,7 +264,8 @@ export default function BlacklistPage() {
         <SectionStack>
           <DashboardPageHeader>
             <DashboardPageIntro>
-              <h1>Blacklisted Companies</h1>
+              <h1>Blacklist Companies</h1>
+              <p>You do not have permission to manage the company blacklist.</p>
             </DashboardPageIntro>
           </DashboardPageHeader>
         </SectionStack>
@@ -241,7 +278,7 @@ export default function BlacklistPage() {
       <SectionStack>
         <DashboardPageHeader>
           <DashboardPageIntro>
-            <h1>Blacklisted Companies</h1>
+            <h1>Blacklist Companies</h1>
             <p>Manage the company names that should block resume generation for VAs before they spend time applying.</p>
           </DashboardPageIntro>
           <DashboardMetaRow>
@@ -267,7 +304,7 @@ export default function BlacklistPage() {
           <DashboardSectionHeader>
             <div>
               <strong>Blacklist directory</strong>
-              <span>Add or remove blocked companies in a dedicated admin workspace. You can also paste a newline-separated list for bulk insert.</span>
+              <span>Create, edit, or remove blocked companies. You can also paste a newline-separated list for bulk insert.</span>
             </div>
           </DashboardSectionHeader>
 
@@ -396,6 +433,26 @@ export default function BlacklistPage() {
           )}
         </DashboardTableSection>
       </SectionStack>
+
+      <Modal
+        title='Edit blacklisted company'
+        open={isModalOpen}
+        onCancel={closeModal}
+        onOk={handleSaveCompany}
+        okText='Save'
+        confirmLoading={isSubmitting}
+        destroyOnClose
+      >
+        <Form form={form} layout='vertical' style={{ marginTop: 16 }}>
+          <Form.Item
+            label='Company name'
+            name='companyName'
+            rules={[{ required: true, message: 'Please enter a company name' }]}
+          >
+            <Input placeholder='Company name' />
+          </Form.Item>
+        </Form>
+      </Modal>
     </PageShell>
   );
 }

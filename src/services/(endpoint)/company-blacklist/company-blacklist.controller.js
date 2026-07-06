@@ -101,6 +101,35 @@ export async function createBlacklistedCompaniesBulk({ bulkValue, createdByUserI
   };
 }
 
+export async function updateBlacklistedCompany(id, { companyName }) {
+  await dbConnect();
+
+  const cleanedCompanyName = String(companyName || '').trim();
+  const normalizedName = normalizeCompanyName(cleanedCompanyName);
+
+  if (!cleanedCompanyName || !normalizedName) {
+    throw new Error('Company name is required');
+  }
+
+  const existing = await companyBlacklistModel.findById(id).lean();
+  if (!existing) {
+    throw new Error('Blacklisted company not found');
+  }
+
+  const duplicate = await companyBlacklistModel.findOne({
+    normalizedName,
+    _id: { $ne: id }
+  }).lean();
+
+  if (duplicate) {
+    throw new Error('This company is already blacklisted');
+  }
+
+  return companyBlacklistModel
+    .findByIdAndUpdate(id, { companyName: cleanedCompanyName, normalizedName }, { new: true })
+    .lean();
+}
+
 export async function deleteBlacklistedCompany(id) {
   await dbConnect();
   return companyBlacklistModel.findByIdAndDelete(id).lean();

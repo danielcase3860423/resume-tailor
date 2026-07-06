@@ -19,7 +19,7 @@ export const ACCESSLIST = {
     { path: '/', label: 'Dashboard' },
     { path: '/users', label: 'Users' },
     { path: '/profiles', label: 'Profiles' },
-    { path: '/blacklist', label: 'Blacklist' },
+    { path: '/blacklist', label: 'Blacklist Companies' },
     { path: '/resume', label: 'Resume' },
     { path: '/applies', label: 'Applies' },
     { path: '/phones', label: 'Phones' },

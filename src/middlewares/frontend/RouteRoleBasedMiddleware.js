@@ -9,10 +9,10 @@ import {
 
 const sharedCommonPageRoute = ['/login'];
 
-const whiteList = [...sharedCommonPageRoute, '/applies', '/resume', '/users', '/profiles', '/phones', '/calls', '/jobs'];
+const whiteList = [...sharedCommonPageRoute, '/applies', '/resume', '/users', '/profiles', '/blacklist', '/phones', '/calls', '/jobs'];
 
 const accessList = {
-  [CONSTANT_USER_ROLE_ADMIN]: [...sharedCommonPageRoute, '/applies', '/resume', '/users', '/profiles', '/phones', '/jobs'],
+  [CONSTANT_USER_ROLE_ADMIN]: [...sharedCommonPageRoute, '/applies', '/resume', '/users', '/profiles', '/blacklist', '/phones', '/jobs'],
   [CONSTANT_USER_ROLE_USER]: [...sharedCommonPageRoute, '/applies', '/resume', '/jobs'],
   [CONSTANT_USER_ROLE_CALLER]: [...sharedCommonPageRoute, '/calls'],
   [CONSTANT_USER_ROLE_GUEST]: [...sharedCommonPageRoute]
