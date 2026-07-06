@@ -29,7 +29,8 @@ export const ACCESSLIST = {
     { path: '/', label: 'Dashboard' },
     { path: '/jobs', label: 'Jobs' },
     { path: '/resume', label: 'Resume' },
-    { path: '/applies', label: 'Applies' }
+    { path: '/applies', label: 'Applies' },
+    { path: '/blacklist', label: 'Blacklist Companies' }
   ],
   [CONSTANT_USER_ROLE_CALLER]: [
     { path: '/', label: 'Dashboard' },

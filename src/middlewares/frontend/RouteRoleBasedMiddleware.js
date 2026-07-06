@@ -13,7 +13,7 @@ const whiteList = [...sharedCommonPageRoute, '/applies', '/resume', '/users', '/
 
 const accessList = {
   [CONSTANT_USER_ROLE_ADMIN]: [...sharedCommonPageRoute, '/applies', '/resume', '/users', '/profiles', '/blacklist', '/phones', '/jobs'],
-  [CONSTANT_USER_ROLE_USER]: [...sharedCommonPageRoute, '/applies', '/resume', '/jobs'],
+  [CONSTANT_USER_ROLE_USER]: [...sharedCommonPageRoute, '/applies', '/resume', '/jobs', '/blacklist'],
   [CONSTANT_USER_ROLE_CALLER]: [...sharedCommonPageRoute, '/calls'],
   [CONSTANT_USER_ROLE_GUEST]: [...sharedCommonPageRoute]
 };
