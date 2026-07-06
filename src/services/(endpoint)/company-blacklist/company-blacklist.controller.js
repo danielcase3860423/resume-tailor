@@ -1,5 +1,6 @@
 import dbConnect from '@/mongodb';
 import companyBlacklistModel from '@/models/companyBlacklist.model';
+import { extractTargetCompanyName } from '@/services/(endpoint)/resumes/resume-generation-prompts';
 
 export function normalizeCompanyName(value = '') {
   return String(value || '')
@@ -10,15 +11,53 @@ export function normalizeCompanyName(value = '') {
     .trim();
 }
 
-function buildNormalizedSearchText({ companyName = '', jobDescription = '', url = '' }) {
-  return normalizeCompanyName([companyName, jobDescription, url].filter(Boolean).join(' '));
-}
-
 function parseBulkCompanyNames(value = '') {
   return String(value || '')
     .split(/\r?\n|,/)
     .map((item) => item.trim())
     .filter(Boolean);
+}
+
+export function resolveTargetCompanyName({ companyName = '', jobDescription = '', url = '' }) {
+  const explicitName = String(companyName || '').trim();
+  if (explicitName) {
+    return explicitName;
+  }
+
+  const extractedName = extractTargetCompanyName(jobDescription);
+  if (extractedName) {
+    return extractedName;
+  }
+
+  try {
+    const hostname = new URL(String(url || '').trim()).hostname.replace(/^www\./, '');
+    const domainRoot = hostname.split('.').filter(Boolean)[0] || '';
+    if (domainRoot && !['linkedin', 'indeed', 'glassdoor', 'ziprecruiter', 'monster'].includes(domainRoot)) {
+      return domainRoot;
+    }
+  } catch {
+    // Ignore invalid URLs.
+  }
+
+  return '';
+}
+
+export function isBlacklistedCompanyMatch(candidateName, blacklistedName) {
+  const candidate = normalizeCompanyName(candidateName);
+  const blocked = normalizeCompanyName(blacklistedName);
+
+  if (!candidate || !blocked) {
+    return false;
+  }
+
+  if (candidate === blocked) {
+    return true;
+  }
+
+  const candidateTokens = new Set(candidate.split(' ').filter(Boolean));
+  const blockedTokens = blocked.split(' ').filter(Boolean);
+
+  return blockedTokens.length > 0 && blockedTokens.every((token) => candidateTokens.has(token));
 }
 
 export async function getBlacklistedCompanies() {
@@ -112,30 +151,19 @@ export async function deleteBlacklistedCompany(id) {
 export async function findBlacklistedCompanyMatch({ companyName = '', jobDescription = '', url = '' }) {
   await dbConnect();
 
+  const targetCompanyName = resolveTargetCompanyName({ companyName, jobDescription, url });
+  if (!targetCompanyName) {
+    return null;
+  }
+
   const blacklist = await companyBlacklistModel.find({}, { companyName: 1, normalizedName: 1 }).lean();
   if (!blacklist.length) {
     return null;
   }
 
-  const normalizedCompanyName = normalizeCompanyName(companyName);
-  const normalizedSearchText = buildNormalizedSearchText({ companyName, jobDescription, url });
-
-  for (const entry of blacklist) {
-    const normalizedName = normalizeCompanyName(entry.normalizedName || entry.companyName);
-    if (!normalizedName) {
-      continue;
-    }
-
-    const directCompanyMatch =
-      normalizedCompanyName &&
-      (normalizedCompanyName.includes(normalizedName) || normalizedName.includes(normalizedCompanyName));
-
-    const contentMatch = normalizedSearchText.includes(normalizedName);
-
-    if (directCompanyMatch || contentMatch) {
-      return entry;
-    }
-  }
-
-  return null;
+  return (
+    blacklist.find((entry) =>
+      isBlacklistedCompanyMatch(targetCompanyName, entry.normalizedName || entry.companyName)
+    ) || null
+  );
 }

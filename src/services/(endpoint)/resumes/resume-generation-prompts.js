@@ -311,8 +311,18 @@ export function extractTargetCompanyName(jobDescription) {
   if (!text) return '';
   const companyLine = text.match(/(?:^|\n)\s*Company:\s*([^\n]+)/i);
   if (companyLine?.[1]) return normalizeKeywordTerm(companyLine[1]);
-  const companyIntro = text.match(/(?:^|\n)\s*([A-Z][A-Za-z0-9&.,' -]{1,80}?)\s+(?:is|provides|builds|develops)\b/);
-  if (companyIntro?.[1]) return normalizeKeywordTerm(companyIntro[1]);
+
+  const joinMatch = text.match(/\bJOIN\s+([A-Z][A-Za-z0-9&.-]{2,40}?)\s+(?:NOW|TOGETHER|TODAY)\b/);
+  if (joinMatch?.[1]) return normalizeKeywordTerm(joinMatch[1]);
+
+  const companyIntro = text.match(/(?:^|[.!?\n]\s*)([A-Z][A-Za-z0-9&.,' -]{1,80}?)\s+(?:is|provides|builds|develops)\b/);
+  if (companyIntro?.[1]) {
+    const candidate = normalizeKeywordTerm(companyIntro[1]);
+    if (candidate && !/^(join|we|our|the)$/i.test(candidate)) {
+      return candidate;
+    }
+  }
+
   return '';
 }
 

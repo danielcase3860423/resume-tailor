@@ -113,11 +113,10 @@ const sanitizeASCII = (str) =>
 
 export const formatASCIIPart = (str) =>
   sanitizeASCII(str)
-    .replace(/ /g, '_')
-    .replace(/-/g, '_')
-    .replace(/[^a-zA-Z0-9_]/g, '')
-    .replace(/_+/g, '_')
-    .replace(/^_+|_+$/g, '');
+    .replace(/[-_]+/g, ' ')
+    .replace(/[^a-zA-Z0-9 ]/g, '')
+    .replace(/\s+/g, ' ')
+    .trim();
 
 export function shortenRole(str) {
   const s = str.toLowerCase();
@@ -126,30 +125,31 @@ export function shortenRole(str) {
   if (s.includes('frontend')) return 'FE';
   if (s.includes('backend')) return 'BE';
   if (s.includes('software engineer')) return 'SWE';
-  if (s.includes('staff')) return 'Staff_SWE';
-  if (s.includes('senior')) return 'Sr_SWE';
-  if (s.includes('founding')) return 'Founding_Eng';
+  if (s.includes('staff')) return 'Staff SWE';
+  if (s.includes('senior')) return 'Sr SWE';
+  if (s.includes('founding')) return 'Founding Eng';
 
-  return str.replace(/[^a-zA-Z0-9]/g, '').slice(0, 20); // fallback
+  return str.replace(/[^a-zA-Z0-9 ]/g, '').replace(/\s+/g, ' ').trim().slice(0, 20);
 }
 
 export function buildResumeFilename({ name, role, company, maxLength = 80 }) {
   const clean = (str) =>
     (str || '')
-      .normalize("NFD")
-      .replace(/[\u0300-\u036f]/g, "")
-      .replace(/[^a-zA-Z0-9]+/g, "_")
-      .replace(/^_+|_+$/g, "");
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .replace(/[^a-zA-Z0-9]+/g, ' ')
+      .replace(/\s+/g, ' ')
+      .trim();
 
   const shortenSegment = (str, maxSegmentLength) => {
     if (!str || str.length <= maxSegmentLength) {
       return str;
     }
 
-    const words = str.split("_").filter(Boolean);
+    const words = str.split(' ').filter(Boolean);
     if (words.length > 1) {
       const compactWords = words.map((word) => word.slice(0, Math.max(3, Math.min(word.length, 8))));
-      const compact = compactWords.join("_");
+      const compact = compactWords.join(' ');
       if (compact.length <= maxSegmentLength) {
         return compact;
       }
@@ -163,14 +163,14 @@ export function buildResumeFilename({ name, role, company, maxLength = 80 }) {
   };
 
   const cleanName = clean(name);
-  const cleanRole = shortenRole(role);
+  const cleanRole = clean(shortenRole(role));
   const cleanCompany = clean(company);
 
   if (!cleanName && !cleanRole && !cleanCompany) {
     return 'resume';
   }
 
-  const buildBase = (parts) => parts.filter(Boolean).join('_');
+  const buildBase = (parts) => parts.filter(Boolean).join(' ');
 
   let adjustedRole = cleanRole;
   let adjustedCompany = cleanCompany;
@@ -189,14 +189,13 @@ export function buildResumeFilename({ name, role, company, maxLength = 80 }) {
   }
 
   if (base.length > maxLength && cleanName) {
-    const reservedForOtherParts = [adjustedRole, adjustedCompany].filter(Boolean).join('_');
+    const reservedForOtherParts = buildBase([adjustedRole, adjustedCompany]);
     const separatorLength = cleanName && reservedForOtherParts ? 1 : 0;
     const availableNameLength = Math.max(20, maxLength - reservedForOtherParts.length - separatorLength);
     base = buildBase([shortenSegment(cleanName, availableNameLength), adjustedRole, adjustedCompany]);
   }
 
-  // return base;
-  return name;
+  return base;
 }
 
 export function shortenLinkedIn(url) {

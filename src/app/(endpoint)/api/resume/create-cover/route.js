@@ -36,7 +36,7 @@ export const POST = async (req) => {
     };
     const r = { ...data, ...completion };
     const profileTemplate = profile?.profileTemplate || 'template1';
-    const cover_name = `${formatASCIIPart(r.name)}_${shortenRole(companyName)}`;
+    const cover_name = `${formatASCIIPart(r.name)} ${shortenRole(companyName)}`.trim();
 
     let pdfBytes = null;
     if (profileTemplate === 'template1') {
