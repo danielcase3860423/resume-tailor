@@ -51,54 +51,28 @@ export async function createBlacklistedCompany({ companyName, createdByUserId = 
 }
 
 export async function createBlacklistedCompaniesBulk({ bulkValue, createdByUserId = '' }) {
-  await dbConnect();
-
   const parsedNames = parseBulkCompanyNames(bulkValue);
   if (!parsedNames.length) {
     throw new Error('Please enter at least one company name.');
   }
 
-  const normalizedMap = new Map();
+  let createdCount = 0;
+  let skippedCount = 0;
+
   for (const companyName of parsedNames) {
-    const normalizedName = normalizeCompanyName(companyName);
-    if (!normalizedName) {
-      continue;
+    try {
+      await createBlacklistedCompany({ companyName, createdByUserId });
+      createdCount += 1;
+    } catch (error) {
+      if (error?.message === 'This company is already blacklisted') {
+        skippedCount += 1;
+        continue;
+      }
+      throw error;
     }
-
-    if (!normalizedMap.has(normalizedName)) {
-      normalizedMap.set(normalizedName, companyName);
-    }
   }
 
-  const normalizedNames = [...normalizedMap.keys()];
-  if (!normalizedNames.length) {
-    throw new Error('Please enter at least one valid company name.');
-  }
-
-  const existingCompanies = await companyBlacklistModel.find(
-    { normalizedName: { $in: normalizedNames } },
-    { normalizedName: 1 }
-  ).lean();
-  const existingNormalizedNames = new Set(existingCompanies.map((item) => item.normalizedName));
-
-  const docsToInsert = normalizedNames
-    .filter((normalizedName) => !existingNormalizedNames.has(normalizedName))
-    .map((normalizedName) => ({
-      companyName: normalizedMap.get(normalizedName),
-      normalizedName,
-      createdByUserId: String(createdByUserId || '')
-    }));
-
-  if (!docsToInsert.length) {
-    return { createdCount: 0, skippedCount: normalizedNames.length };
-  }
-
-  await companyBlacklistModel.insertMany(docsToInsert, { ordered: false });
-
-  return {
-    createdCount: docsToInsert.length,
-    skippedCount: normalizedNames.length - docsToInsert.length
-  };
+  return { createdCount, skippedCount };
 }
 
 export async function updateBlacklistedCompany(id, { companyName }) {
