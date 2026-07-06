@@ -21,14 +21,13 @@ import {
   PageToolbar,
   ToolbarGroup
 } from '@/_components/layout/client/styled';
-import { CONSTANT_USER_ROLE_ADMIN, DEFAULT_PAGINATION_SIZE } from '@/config/constants';
+import { DEFAULT_PAGINATION_SIZE } from '@/config/constants';
 import { useGlobalContext } from '@/context/auth';
 
 const { TextArea } = Input;
 
 export default function BlacklistPage() {
   const { loginUser } = useGlobalContext();
-  const currentRole = loginUser?.user?.role;
   const currentUserId = loginUser?.user?.id;
   const [companies, setCompanies] = useState([]);
   const [selectedCompanyIds, setSelectedCompanyIds] = useState([]);
@@ -62,10 +61,8 @@ export default function BlacklistPage() {
   };
 
   useEffect(() => {
-    if (currentRole === CONSTANT_USER_ROLE_ADMIN) {
-      fetchCompanies();
-    }
-  }, [currentRole]);
+    fetchCompanies();
+  }, []);
 
   const filteredCompanies = useMemo(() => {
     const term = search.trim().toLowerCase();
@@ -257,21 +254,6 @@ export default function BlacklistPage() {
       )
     }
   ];
-
-  if (currentRole !== CONSTANT_USER_ROLE_ADMIN) {
-    return (
-      <PageShell>
-        <SectionStack>
-          <DashboardPageHeader>
-            <DashboardPageIntro>
-              <h1>Blacklist Companies</h1>
-              <p>You do not have permission to manage the company blacklist.</p>
-            </DashboardPageIntro>
-          </DashboardPageHeader>
-        </SectionStack>
-      </PageShell>
-    );
-  }
 
   return (
     <PageShell>

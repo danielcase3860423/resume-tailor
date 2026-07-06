@@ -1,19 +1,15 @@
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
-import { isAdmin, sendError } from '@/helpers/endpoint';
+import { sendError } from '@/helpers/endpoint';
 import {
   createBlacklistedCompany,
   createBlacklistedCompaniesBulk,
   getBlacklistedCompanies
 } from '@/services/(endpoint)/company-blacklist/company-blacklist.controller';
 
-export const GET = async (req) => {
+export const GET = async () => {
   try {
-    if (!isAdmin(req)) {
-      return sendError(Response, { code: 403, msg: 'No permission to view blacklisted companies' });
-    }
-
     const companies = await getBlacklistedCompanies();
     return Response.json({ result: 'success', companies });
   } catch (error) {
@@ -24,10 +20,6 @@ export const GET = async (req) => {
 
 export const POST = async (req) => {
   try {
-    if (!isAdmin(req)) {
-      return sendError(Response, { code: 403, msg: 'No permission to add blacklisted companies' });
-    }
-
     const { companyName, bulkValue, userId } = await req.json();
     const normalizedBulkValue = String(bulkValue || '').trim();
 

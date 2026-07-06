@@ -1,7 +1,7 @@
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
-import { isAdmin, sendError } from '@/helpers/endpoint';
+import { sendError } from '@/helpers/endpoint';
 import {
   deleteBlacklistedCompany,
   updateBlacklistedCompany
@@ -9,10 +9,6 @@ import {
 
 export const PUT = async (req, { params }) => {
   try {
-    if (!isAdmin(req)) {
-      return sendError(Response, { code: 403, msg: 'No permission to update blacklisted companies' });
-    }
-
     const { companyName } = await req.json();
     const company = await updateBlacklistedCompany(params.id, { companyName });
 
@@ -27,12 +23,8 @@ export const PUT = async (req, { params }) => {
   }
 };
 
-export const DELETE = async (req, { params }) => {
+export const DELETE = async (_req, { params }) => {
   try {
-    if (!isAdmin(req)) {
-      return sendError(Response, { code: 403, msg: 'No permission to delete blacklisted companies' });
-    }
-
     const deleted = await deleteBlacklistedCompany(params.id);
 
     if (!deleted) {
