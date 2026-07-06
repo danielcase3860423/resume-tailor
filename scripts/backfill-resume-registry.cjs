@@ -2,8 +2,8 @@
 
 const fs = require('fs');
 const path = require('path');
-const crypto = require('crypto');
 const mongoose = require('mongoose');
+const { buildJobDescriptionHash } = require('./shared/resume-history.cjs');
 
 const CONNECTION_OPTIONS = {
   bufferCommands: true,
@@ -47,18 +47,6 @@ function parseEnvFile(filePath) {
 function loadLocalEnv() {
   parseEnvFile(path.resolve(process.cwd(), '.env.local'));
   parseEnvFile(path.resolve(process.cwd(), '.env'));
-}
-
-function normalizeResumeText(value) {
-  return (value || '')
-    .toString()
-    .trim()
-    .replace(/\s+/g, ' ')
-    .toLowerCase();
-}
-
-function buildJobDescriptionHash(jobDescription) {
-  return crypto.createHash('sha256').update(normalizeResumeText(jobDescription)).digest('hex');
 }
 
 function parseArgs(argv) {

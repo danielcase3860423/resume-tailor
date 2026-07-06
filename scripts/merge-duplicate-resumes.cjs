@@ -3,7 +3,7 @@
 const fs = require('fs');
 const path = require('path');
 const mongoose = require('mongoose');
-const crypto = require('crypto');
+const { buildJobDescriptionHash, buildResumeContentHash } = require('./shared/resume-history.cjs');
 
 const RESUME_ENV_PREFIX = 'MONGODB_RESUME_URI';
 const CONNECTION_OPTIONS = {
@@ -65,42 +65,6 @@ function getResumeUris() {
   return [];
 }
 
-function sortObjectKeys(value) {
-  if (Array.isArray(value)) {
-    return value.map(sortObjectKeys);
-  }
-
-  if (value && typeof value === 'object' && !(value instanceof Date)) {
-    return Object.keys(value)
-      .sort()
-      .reduce((accumulator, key) => {
-        accumulator[key] = sortObjectKeys(value[key]);
-        return accumulator;
-      }, {});
-  }
-
-  return value;
-}
-
-function stableStringify(value) {
-  return JSON.stringify(sortObjectKeys(value ?? {}));
-}
-
-function normalizeResumeText(value) {
-  return (value || '')
-    .toString()
-    .trim()
-    .replace(/\s+/g, ' ')
-    .toLowerCase();
-}
-
-function buildResumeContentHash(resumeResponse) {
-  return crypto.createHash('sha256').update(stableStringify(resumeResponse || {})).digest('hex');
-}
-
-function buildJobDescriptionHash(jobDescription) {
-  return crypto.createHash('sha256').update(normalizeResumeText(jobDescription)).digest('hex');
-}
 
 function chooseCanonicalResume(leftResume, rightResume) {
   const leftCreatedAt = leftResume?.created_at ? new Date(leftResume.created_at).getTime() : Number.MAX_SAFE_INTEGER;

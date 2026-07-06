@@ -4,7 +4,7 @@ const fs = require('fs');
 const path = require('path');
 const mongoose = require('mongoose');
 const { deserialize } = require('bson');
-const crypto = require('crypto');
+const { buildJobDescriptionHash, buildResumeContentHash } = require('./shared/resume-history.cjs');
 
 const DEFAULT_DUMP_PATH = '/home/gemini/Documents/dump';
 const RESUME_ENV_PREFIX = 'MONGODB_RESUME_URI';
@@ -28,27 +28,6 @@ function hashString(value) {
   return hash;
 }
 
-function sortObjectKeys(value) {
-  if (Array.isArray(value)) {
-    return value.map(sortObjectKeys);
-  }
-
-  if (value && typeof value === 'object' && !(value instanceof Date)) {
-    return Object.keys(value)
-      .sort()
-      .reduce((accumulator, key) => {
-        accumulator[key] = sortObjectKeys(value[key]);
-        return accumulator;
-      }, {});
-  }
-
-  return value;
-}
-
-function stableStringify(value) {
-  return JSON.stringify(sortObjectKeys(value ?? {}));
-}
-
 function normalizeEmail(value) {
   return (value || '').toString().trim().toLowerCase();
 }
@@ -69,22 +48,6 @@ function normalizeStoredPhoneNumber(value) {
   }
 
   return (value || '').toString().trim();
-}
-
-function normalizeResumeText(value) {
-  return (value || '')
-    .toString()
-    .trim()
-    .replace(/\s+/g, ' ')
-    .toLowerCase();
-}
-
-function buildResumeContentHash(resumeResponse) {
-  return crypto.createHash('sha256').update(stableStringify(resumeResponse || {})).digest('hex');
-}
-
-function buildJobDescriptionHash(jobDescription) {
-  return crypto.createHash('sha256').update(normalizeResumeText(jobDescription)).digest('hex');
 }
 
 function normalizeLinkedIn(value) {

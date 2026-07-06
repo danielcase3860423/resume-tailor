@@ -2,8 +2,8 @@
 
 const fs = require('fs');
 const path = require('path');
-const crypto = require('crypto');
 const mongoose = require('mongoose');
+const { buildJobDescriptionHash } = require('./shared/resume-history.cjs');
 
 const RESUME_ENV_PREFIX = 'MONGODB_RESUME_URI';
 const CONNECTION_OPTIONS = {
@@ -64,18 +64,6 @@ function getResumeUris() {
   }
 
   return [];
-}
-
-function normalizeResumeText(value) {
-  return (value || '')
-    .toString()
-    .trim()
-    .replace(/\s+/g, ' ')
-    .toLowerCase();
-}
-
-function buildJobDescriptionHash(jobDescription) {
-  return crypto.createHash('sha256').update(normalizeResumeText(jobDescription)).digest('hex');
 }
 
 function parseArgs(argv) {

@@ -21,9 +21,8 @@ import { extractJobDescriptionTechnicalTerms } from '@/services/(endpoint)/resum
 import { getActiveUserById, getUserById } from '@/services/(endpoint)/users/user.controller';
 
 const DUPLICATE_HISTORY_STALE_DAYS = 90;
-const JOB_DESCRIPTION_SIMILARITY_THRESHOLD = 0.9;
-// Kept as a named constant so its purpose is clear at the call site.
-const SIMILARITY_CHECK_RESUME_LIMIT = 25;
+const JOB_DESCRIPTION_SIMILARITY_THRESHOLD = 0.85;
+const SIMILARITY_CHECK_RESUME_LIMIT = 100;
 const RESUME_GENERATION_MODEL = 'gpt-4.1-nano';
 const RESUME_GENERATION_PROMPT_VERSION = 'route-resume-v3';
 const MAX_JOB_DESCRIPTION_LENGTH = 12000;
@@ -556,6 +555,28 @@ export const POST = async (req) => {
     const jobDescriptionHash = buildJobDescriptionHash(desc);
 
     if (!isAdmin) {
+      const similarResumeMatch = await findHighlySimilarResume({
+        associatedProfileId: profileId,
+        jobDescriptionHash,
+        jobDescription: desc
+      });
+
+      if (similarResumeMatch) {
+        const existingResumeOwner = similarResumeMatch.existingResume?.associatedUserId
+          ? await getUserById(similarResumeMatch.existingResume.associatedUserId)
+          : null;
+
+        return sendError(Response, {
+          code: 409,
+          msg: buildDuplicateResumeMessage({
+            existingResume: similarResumeMatch.existingResume,
+            currentUser,
+            existingResumeOwner,
+            similarityScore: similarResumeMatch.similarityScore
+          })
+        });
+      }
+
       const registryClaim = await claimResumeGeneration({
         associatedProfileId: profileId,
         associatedUserId: userId,
@@ -598,36 +619,6 @@ export const POST = async (req) => {
       }
 
       claimedRegistry = claimedRegistry || registryClaim.entry;
-
-      const similarResumeMatch = await findHighlySimilarResume({
-        associatedProfileId: profileId,
-        jobDescriptionHash,
-        jobDescription: desc
-      });
-
-      if (similarResumeMatch) {
-        const existingResumeOwner = similarResumeMatch.existingResume?.associatedUserId
-          ? await getUserById(similarResumeMatch.existingResume.associatedUserId)
-          : null;
-
-        await markResumeGenerationFailed({
-          registryId: claimedRegistry?._id,
-          errorMessage: `Declined due to ${Math.round(similarResumeMatch.similarityScore * 100)}% job description similarity with existing history.`
-        });
-
-        // Clear the claimed registry so the catch block doesn't double-mark it.
-        claimedRegistry = null;
-
-        return sendError(Response, {
-          code: 409,
-          msg: buildDuplicateResumeMessage({
-            existingResume: similarResumeMatch.existingResume,
-            currentUser,
-            existingResumeOwner,
-            similarityScore: similarResumeMatch.similarityScore
-          })
-        });
-      }
     }
 
     const { response: completion, model, promptText, promptVersion } = await generateResumeDirect(profile, desc);
