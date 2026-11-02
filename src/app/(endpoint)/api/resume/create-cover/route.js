@@ -189,7 +189,7 @@ const getAICompletion = async (prompt) => {
   const completion = await openai.chat.completions.create({
     model,
     messages: [{ role: 'user', content: prompt }],
-    temperature: 0.7
+    temperature: 1
   });
 
   const content = completion.choices[0].message.content.trim();
