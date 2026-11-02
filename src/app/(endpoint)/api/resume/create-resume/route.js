@@ -481,7 +481,7 @@ async function getAICompletion(prompt) {
   const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
   const completion = await openai.chat.completions.create({
     model: RESUME_GENERATION_MODEL,
-    temperature: 0.45,
+    temperature: 1,
     response_format: { type: 'json_object' },
     max_completion_tokens: 4096,
     messages: [
