@@ -517,7 +517,7 @@ async function expandRole(role, targetEngineeringLane, jdKeyTerms, callModelFn) 
         { role: 'system', content: ROLE_EXPANSION_SYSTEM_PROMPT },
         { role: 'user', content: prompt }
       ],
-      { temperature: 0.4, max_completion_tokens: 900 }
+      { max_completion_tokens: 900 }
     );
 
     if (!expansion || typeof expansion !== 'object') return role;
@@ -748,7 +748,7 @@ function makeCallModelFn(openai) {
   return async function callModelFn(messages, opts = {}) {
     const completion = await openai.chat.completions.create({
       model: RESUME_GENERATION_MODEL,
-      temperature: opts.temperature ?? RESUME_GENERATION_TEMPERATURE,
+      temperature: RESUME_GENERATION_TEMPERATURE,
       max_completion_tokens: opts.max_completion_tokens ?? opts.max_tokens ?? 4096,
       response_format: { type: 'json_object' },
       messages
@@ -825,7 +825,6 @@ export async function generateResume({ profile, jobDescription }) {
   ];
 
   const rewrittenResumeJson = await callModelFn(qualityRewriteMessages, {
-    temperature: 0.25,
     max_completion_tokens: 4096
   });
 
