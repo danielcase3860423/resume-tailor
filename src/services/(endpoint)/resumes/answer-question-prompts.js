@@ -4,7 +4,7 @@ import {
 } from '@/services/(endpoint)/resumes/resume-generation-prompts';
 
 export const ANSWER_QUESTION_MODEL = 'gpt-6-luna';
-export const ANSWER_QUESTION_TEMPERATURE = 0.45;
+export const ANSWER_QUESTION_TEMPERATURE = 1;
 
 const MAX_CHAT_HISTORY = 8;
 export const MAX_QUESTION_LENGTH = 1200;
