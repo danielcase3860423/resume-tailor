@@ -1,5 +1,5 @@
 // Model & prompt versioning
-export const RESUME_GENERATION_MODEL = 'gpt-4.1-nano';
+export const RESUME_GENERATION_MODEL = 'gpt-4.1-mini';
 export const RESUME_GENERATION_TEMPERATURE = 0.7;
 export const RESUME_GENERATION_PROMPT_VERSION = 'resume-v25';
 
