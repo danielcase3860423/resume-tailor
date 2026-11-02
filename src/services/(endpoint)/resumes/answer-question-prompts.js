@@ -3,7 +3,7 @@ import {
   buildStrategicJobDescription
 } from '@/services/(endpoint)/resumes/resume-generation-prompts';
 
-export const ANSWER_QUESTION_MODEL = 'gpt-4.1-mini';
+export const ANSWER_QUESTION_MODEL = 'gpt-6-luna';
 export const ANSWER_QUESTION_TEMPERATURE = 0.45;
 
 const MAX_CHAT_HISTORY = 8;
