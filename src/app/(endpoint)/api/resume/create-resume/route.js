@@ -23,7 +23,7 @@ import { getActiveUserById, getUserById } from '@/services/(endpoint)/users/user
 const DUPLICATE_HISTORY_STALE_DAYS = 90;
 const JOB_DESCRIPTION_SIMILARITY_THRESHOLD = 0.85;
 const SIMILARITY_CHECK_RESUME_LIMIT = 100;
-const RESUME_GENERATION_MODEL = 'gpt-4.1-mini';
+const RESUME_GENERATION_MODEL = 'gpt-6-luna';
 const RESUME_GENERATION_PROMPT_VERSION = 'route-resume-v3';
 const MAX_JOB_DESCRIPTION_LENGTH = 12000;
 const MIN_BULLETS_PER_ROLE = 5;
