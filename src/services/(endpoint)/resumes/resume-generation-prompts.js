@@ -1,6 +1,6 @@
 // Model & prompt versioning
 export const RESUME_GENERATION_MODEL = 'gpt-6-luna';
-export const RESUME_GENERATION_TEMPERATURE = 0.7;
+export const RESUME_GENERATION_TEMPERATURE = 1;
 export const RESUME_GENERATION_PROMPT_VERSION = 'resume-v25';
 
 // Constants
