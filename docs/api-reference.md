@@ -238,7 +238,7 @@ Most failures return HTTP `401` with `{ "msg": "..." }` via `sendError()`.
 }
 ```
 - Behavior:
-- Calls OpenAI (`gpt-4.1-mini`) to generate structured resume content.
+- Calls OpenAI (`gpt-6-luna`) to generate structured resume content.
 - Stores generated payload in the least-populated configured resume cluster.
 - Returns generated PDF bytes.
 - Success: HTTP `200`, `Content-Type: application/pdf`
@@ -259,7 +259,7 @@ Most failures return HTTP `401` with `{ "msg": "..." }` via `sendError()`.
 { "profileId": "...", "desc": "job description", "companyName": "...", "position": "..." }
 ```
 - Behavior:
-- Calls OpenAI (`gpt-4.1-mini`) to generate cover-letter content.
+- Calls OpenAI (`gpt-6-luan`) to generate cover-letter content.
 - Returns generated cover-letter PDF bytes.
 - Success: HTTP `200`, `Content-Type: application/pdf`
 
