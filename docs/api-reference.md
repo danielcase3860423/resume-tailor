@@ -259,7 +259,7 @@ Most failures return HTTP `401` with `{ "msg": "..." }` via `sendError()`.
 { "profileId": "...", "desc": "job description", "companyName": "...", "position": "..." }
 ```
 - Behavior:
-- Calls OpenAI (`gpt-6-luan`) to generate cover-letter content.
+- Calls OpenAI (`gpt-6-luna`) to generate cover-letter content.
 - Returns generated cover-letter PDF bytes.
 - Success: HTTP `200`, `Content-Type: application/pdf`
 
