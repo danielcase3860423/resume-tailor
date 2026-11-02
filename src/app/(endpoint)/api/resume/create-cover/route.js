@@ -183,7 +183,7 @@ function extractProtectedCoverNames(jobDescription, companyName = '') {
 }
 
 const getAICompletion = async (prompt) => {
-  const model = 'gpt-4.1-nano';
+  const model = 'gpt-4.1-mini';
   const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
   const completion = await openai.chat.completions.create({
